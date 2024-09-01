@@ -1,25 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { ApiProvider } from "@reduxjs/toolkit/query/react";
+import { Button } from "antd";
+
+import IssueList from "./components/EmployeeList/EmployeeList";
+import AddEditModal from "./components/AddEditModal/AddEditModal";
+import { issuesApi } from "./slices/apislice";
+
+import styles from "./App.module.css";
 
 function App() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editData, setEditData] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <ApiProvider api={issuesApi}>
+      <div className={styles.bodyWrapper}>
+        <div className={styles.headingWrapper}>Employee Log</div>
+        <Button
+          className={styles.addButton}
+          onClick={() => {
+            setEditData(null);
+            setModalVisible(true);
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          Add Employee
+        </Button>
+        <IssueList
+          setEditData={setEditData}
+          changeIsVisible={setModalVisible}
+          editData={editData}
+          isVisible={modalVisible}
+        />
+        <AddEditModal
+          isVisible={modalVisible}
+          changeIsVisible={setModalVisible}
+          editData={editData}
+          changeEditData={setEditData}
+        />
+      </div>
+    </ApiProvider>
   );
 }
 
